@@ -16,9 +16,17 @@ export const getAllHistoricalQuotes = async (symbol = 'AMRN', region = 'US') => 
 }
 
 // Get All symbols
-export const getAllSybols = async () => {
+export const getAllSymbols = async () => {
     let url = urlConstants.GET_SYMBOLS
     const resp = await api.get(url)
     return resp.data
 }
+
+// Get All symbols
+export const saveCompanyObj = async (data) => {
+    let url = urlConstants.SAVE_COMPANY
+    const resp = await api.post(url, data)
+    return resp.data
+}
+
 

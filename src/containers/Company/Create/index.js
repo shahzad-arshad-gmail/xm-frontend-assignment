@@ -3,8 +3,9 @@ import {Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, 
 import {Pie, PieChart, Tooltip} from "recharts";
 import ROUTES from "../../../routes/paths";
 import {useNavigate} from "react-router-dom";
-import {getAllHistoricalQuotes, getAllSybols} from "../../../utils/apiCall";
+import {getAllHistoricalQuotes, getAllSymbols, saveCompanyObj} from "../../../utils/apiCall";
 import DatePicker from "../../../components/DatePicker";
+import moment from 'moment'
 
 function CompanyCreate() {
     const [loading, setLoading] = useState()
@@ -22,7 +23,7 @@ function CompanyCreate() {
 
     useEffect(() => {
         (async () => {
-            const result = await getAllSybols();
+            const result = await getAllSymbols();
             console.log(result)
             setSymbols(result)
 
@@ -38,7 +39,33 @@ function CompanyCreate() {
      * @param value Exception status
      */
     const saveCompany = async () => {
+        const saveObject = {
+            email: company.companyEmail,
+            symbol_id: company.companySymbol,
+            start_date: moment(company.companyStartDate).format(
+                'YYYY-MM-DD',
+            ),
+            end_date: moment(company.companyEndDate).format(
+                'YYYY-MM-DD',
+            )
 
+
+        }
+
+        const response = await saveCompanyObj(saveObject)
+
+console.log(response,"response")
+        if (response.errors) {
+            const errors = {}
+            errors.companySymbol = ''
+            // errors.companyEmail = ''
+            errors.companyStartDate = ''
+            errors.companyEndDate = ''
+            errors.companyEmail = response.errors.email[0]
+            if (response.errors.email) {
+               alert(response.errors.email[0])
+            }
+        }
     }
 
     /**
@@ -73,7 +100,8 @@ function CompanyCreate() {
         }
 
         if (company.companyEmail) {
-            if(!validateEmail()){
+
+            if (!validateEmail(company.companyEmail)) {
                 formIsValid = false
                 errors.companyEmail = 'You have entered an invalid email address!'
             }
@@ -161,7 +189,8 @@ function CompanyCreate() {
                                 <MenuItem value={item.id} key={item.id}>{item.value}</MenuItem>
                             ))}
                         </Select>
-                        {company.errors.companySymbol && (<FormHelperText className={'!text-red-700'}>{company.errors.companySymbol}</FormHelperText>)}
+                        {company.errors.companySymbol && (<FormHelperText
+                            className={'!text-red-700'}>{company.errors.companySymbol}</FormHelperText>)}
                     </FormControl>
                 </div>
                 <div className={"w-64 ml-90 mt-8"}>
@@ -173,7 +202,8 @@ function CompanyCreate() {
                                variant="outlined"
                                error={company.errors.companyEmail}
                     />
-                    {company.errors.companyEmail && (<FormHelperText className={'!text-red-700'}>{company.errors.companyEmail}</FormHelperText>)}
+                    {company.errors.companyEmail && (
+                        <FormHelperText className={'!text-red-700'}>{company.errors.companyEmail}</FormHelperText>)}
 
                 </div>
 
@@ -184,7 +214,9 @@ function CompanyCreate() {
                         handleChange={handleStartDateChange}
                         error={company.errors.companyStartDate}
                     />
-                    {company.errors.companyStartDate && (<FormHelperText className={'!text-red-700'}>{company.errors.companyStartDate}</FormHelperText>)}
+                    {company.errors.companyStartDate && (
+                        <FormHelperText
+                            className={'!text-red-700'}>{company.errors.companyStartDate}</FormHelperText>)}
 
                 </div>
 
@@ -195,13 +227,14 @@ function CompanyCreate() {
                         handleChange={handleEndDateChange}
                         error={company.errors.companyEndDate}
                     />
-                    {company.errors.companyEndDate && (<FormHelperText className={'!text-red-700'}>{company.errors.companyEndDate}</FormHelperText>)}
+                    {company.errors.companyEndDate && (
+                        <FormHelperText
+                            className={'!text-red-700'}>{company.errors.companyEndDate}</FormHelperText>)}
 
                 </div>
                 <Button className={"w-52 float-right"} onClick={isFormValid} variant="outlined">Save </Button>
 
             </div>
-
 
 
         </>
