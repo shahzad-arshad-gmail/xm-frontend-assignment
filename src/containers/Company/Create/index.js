@@ -48,13 +48,11 @@ function CompanyCreate() {
             end_date: moment(company.companyEndDate).format(
                 'YYYY-MM-DD',
             )
-
-
         }
 
         const response = await saveCompanyObj(saveObject)
 
-console.log(response,"response")
+        console.log(response, "response")
         if (response.errors) {
             const errors = {}
             errors.companySymbol = ''
@@ -63,7 +61,7 @@ console.log(response,"response")
             errors.companyEndDate = ''
             errors.companyEmail = response.errors.email[0]
             if (response.errors.email) {
-               alert(response.errors.email[0])
+                alert(response.errors.email[0])
             }
         }
     }
